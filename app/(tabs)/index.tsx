@@ -54,10 +54,12 @@ export default function Index() {
                                     className="size-3" resizeMode="contain" />
                          </TouchableOpacity>
                      </View>
+
                      <CartButton />
                  </View>
 
              )}
+
          />
 
      </SafeAreaView>
