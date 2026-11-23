@@ -102,7 +102,8 @@ interface SignInParams {
     password: string;
 }
 
-interface GetMenuParams {
-    category: string;
-    query: string;
+export interface GetMenuParams {
+    category?: string;
+    query?: string;
+    limit?: number;
 }

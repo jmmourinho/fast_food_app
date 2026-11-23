@@ -1,17 +1,17 @@
 import {Account, Avatars, Client, Databases, ID, Query, Storage} from "react-native-appwrite";
-import {CreateUserParams, GetMenuParams, SignInParams, User} from "../type";
+import {Category, CreateUserParams, GetMenuParams, MenuItem, SignInParams, User} from "../type";
 
 export const appwriteConfig = {
     endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!,
     projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!,
     platform:"com.chris.foodapp",
     databaseId:'6b00ea250019200fb918',
-    bucketId: '',
+    bucketId: '6b04943f00230bafbb7d',
     userCollectionId: '6b00eac7002bed11ce84',
-    categoriesCollectionId: '',
-    menuCollectionId: '',
-    customizationsCollectionId: '',
-    menuCustomizationsCollectionId: ''
+    categoriesCollectionId: '6b048ba80020abb5f9c7',
+    menuCollectionId: '6b048d0a000c2920c4e2',
+    customizationsCollectionId: '6b049085000894a1b7ec',
+    menuCustomizationsCollectionId: '6b04926c00006435368b'
 }
 
 export const client = new Client();
@@ -74,12 +74,13 @@ export const getCurrentUser = async (): Promise<User | null> => {
     }
 }
 
-export const getMenu = async ({ category, query }: GetMenuParams) => {
+export const getMenu = async ({ category, query, limit }: GetMenuParams): Promise<MenuItem[]> => {
     try {
         const queries: string[] = [];
 
-        if(category) queries.push(Query.equal('categories', category));
+        if(category && category !== 'all') queries.push(Query.equal('categories', category));
         if(query) queries.push(Query.search('name', query));
+        if(limit) queries.push(Query.limit(limit));
 
         const menus = await databases.listDocuments(
             appwriteConfig.databaseId,
@@ -87,20 +88,20 @@ export const getMenu = async ({ category, query }: GetMenuParams) => {
             queries,
         )
 
-        return menus.documents;
+        return menus.documents as unknown as MenuItem[];
     } catch (e) {
         throw new Error(e as string);
     }
 }
 
-export const getCategories = async () => {
+export const getCategories = async (): Promise<Category[]> => {
     try {
         const categories = await databases.listDocuments(
             appwriteConfig.databaseId,
             appwriteConfig.categoriesCollectionId,
         )
 
-        return categories.documents;
+        return categories.documents as unknown as Category[];
     } catch (e) {
         throw new Error(e as string);
     }
